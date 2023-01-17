@@ -29,7 +29,7 @@ public class UserAssertions {
     @Step
     public void notRequiredFieldError(ValidatableResponse response){
         response
-                .assertThat()
+                .assertThat().log().all()
                 .statusCode(SC_FORBIDDEN)
                 .body("success", is(false))
                 .body("message", equalTo("Email, password and name are required fields"));
