@@ -14,7 +14,7 @@ public class AuthAssertions {
     @Step
     public void logInSuccessful(ValidatableResponse response) {
         response
-                .assertThat().log().all()
+                .assertThat()
                 .statusCode(SC_OK)
                 .body("success", is(true))
                 .body("accessToken", not(empty()))
@@ -22,9 +22,9 @@ public class AuthAssertions {
     }
 
     @Step
-    public void logInFailed(ValidatableResponse response) {
+    public void unauthorizedFailed(ValidatableResponse response) {
         response
-                .assertThat().log().all()
+                .assertThat()
                 .statusCode(SC_UNAUTHORIZED)
                 .body("success", is(false))
                 .body("message", equalTo("email or password are incorrect"));

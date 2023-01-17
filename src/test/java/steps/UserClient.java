@@ -11,7 +11,7 @@ import static io.restassured.RestAssured.given;
 public class UserClient {
     @Step
     public ValidatableResponse createUser(User user) {
-        return given().log().all()
+        return given()
                 .baseUri(BASE_URI)
                 .contentType(ContentType.JSON)
                 .and()
@@ -22,8 +22,20 @@ public class UserClient {
     }
 
     @Step
+    public ValidatableResponse deleteUser(String token) {
+        return given()
+                .baseUri(BASE_URI)
+                .contentType(ContentType.JSON)
+                .header("Authorization", token)
+                .and()
+                .when()
+                .delete(USER_URI)
+                .then();
+    }
+
+    @Step
     public ValidatableResponse getUser(String token) {
-        return given().log().all()
+        return given()
                 .baseUri(BASE_URI)
                 .contentType(ContentType.JSON)
                 .header("Authorization", token)
@@ -35,7 +47,7 @@ public class UserClient {
 
     @Step
     public ValidatableResponse updateUser(String token, User user) {
-        return given().log().all()
+        return given()
                 .baseUri(BASE_URI)
                 .contentType(ContentType.JSON)
                 .header("Authorization", token)
@@ -48,7 +60,7 @@ public class UserClient {
 
     @Step
     public ValidatableResponse updateUser(User user) {
-        return given().log().all()
+        return given()
                 .baseUri(BASE_URI)
                 .contentType(ContentType.JSON)
                 .and()

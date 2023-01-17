@@ -5,13 +5,14 @@ import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import json.OrderGenerator;
 
-import static data.TestData.*;
+import static data.TestData.BASE_URI;
+import static data.TestData.ORDERS_URI;
 import static io.restassured.RestAssured.given;
 
 public class OrderClient {
     @Step
-    public ValidatableResponse createOrderWithIngredients(){
-        return given().log().all()
+    public ValidatableResponse createOrderWithIngredients() {
+        return given()
                 .baseUri(BASE_URI)
                 .contentType(ContentType.JSON)
                 .and()
@@ -22,8 +23,8 @@ public class OrderClient {
     }
 
     @Step
-    public ValidatableResponse createOrderWithIngredients(String token){
-        return given().log().all()
+    public ValidatableResponse createOrderWithIngredients(String token) {
+        return given()
                 .baseUri(BASE_URI)
                 .contentType(ContentType.JSON)
                 .header("Authorization", token)
@@ -35,8 +36,8 @@ public class OrderClient {
     }
 
     @Step
-    public ValidatableResponse createOrderWithBadIngredient(){
-        return given().log().all()
+    public ValidatableResponse createOrderWithBadIngredient() {
+        return given()
                 .baseUri(BASE_URI)
                 .contentType(ContentType.JSON)
                 .and()
@@ -47,8 +48,8 @@ public class OrderClient {
     }
 
     @Step
-    public ValidatableResponse createOrderWithoutIngredients(){
-        return given().log().all()
+    public ValidatableResponse createOrderWithoutIngredients() {
+        return given()
                 .baseUri(BASE_URI)
                 .contentType(ContentType.JSON)
                 .and()
@@ -58,8 +59,8 @@ public class OrderClient {
     }
 
     @Step
-    public ValidatableResponse getOrders(){
-        return given().log().all()
+    public ValidatableResponse getOrders() {
+        return given()
                 .baseUri(BASE_URI)
                 .contentType(ContentType.JSON)
                 .and()
@@ -69,8 +70,8 @@ public class OrderClient {
     }
 
     @Step
-    public ValidatableResponse getOrders(String token){
-        return given().log().all()
+    public ValidatableResponse getOrders(String token) {
+        return given()
                 .baseUri(BASE_URI)
                 .contentType(ContentType.JSON)
                 .header("Authorization", token)

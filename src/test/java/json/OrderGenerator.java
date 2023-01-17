@@ -11,14 +11,13 @@ public class OrderGenerator {
     public static Order getRandomOrder() {
         IngredientsClient ingredientsClient = new IngredientsClient();
         List<String> listOfIngredients = new ArrayList<>();
-        listOfIngredients.add(ingredientsClient.getListOfIngredients().get(ThreadLocalRandom.current().nextInt(1, ingredientsClient.getListOfIngredients().size())));
-        listOfIngredients.add(ingredientsClient.getListOfIngredients().get(ThreadLocalRandom.current().nextInt(1, ingredientsClient.getListOfIngredients().size())));
+        listOfIngredients.add(ingredientsClient.getListOfIngredientsId().get(ThreadLocalRandom.current().nextInt(1, ingredientsClient.getListOfIngredientsId().size())));
+        listOfIngredients.add(ingredientsClient.getListOfIngredientsId().get(ThreadLocalRandom.current().nextInt(1, ingredientsClient.getListOfIngredientsId().size())));
 
         return new Order(listOfIngredients);
     }
 
     public static Order getOrderWithBadIngredient() {
-        IngredientsClient ingredientsClient = new IngredientsClient();
         List<String> listOfIngredients = new ArrayList<>();
         listOfIngredients.add(RandomStringUtils.randomAlphabetic(7));
 

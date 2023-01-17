@@ -3,6 +3,7 @@ import io.restassured.response.ValidatableResponse;
 import json.Credentials;
 import json.User;
 import json.UserGenerator;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import steps.AuthClient;
@@ -18,34 +19,46 @@ public class OrderTest {
     private String token;
     private User user;
     private Credentials credentials;
+
     @Before
     public void serUp() {
         user = UserGenerator.getRandomUser();
         credentials = new Credentials(user.getEmail(), user.getPassword());
         userClient.createUser(user);
+        token = authClient.logIn(credentials).extract().path("accessToken");
+    }
+
+    @After
+    public void tearDown() {
+        userClient.deleteUser(token);
     }
 
     @Test
     @DisplayName("Create order without auth successful with ingredients")
-    public void createOrderWithoutAuthWithIngredients() {
+    public void createOrderWithoutAuthWithIngredientsSuccessful() {
         ValidatableResponse newOrderResponse = orderClient.createOrderWithIngredients();
-        orderAssertions.orderWithoutAuthSuccessful(newOrderResponse);
+        orderAssertions.orderSuccessful(newOrderResponse);
+    }
+
+    @Test
+    @DisplayName("Create order without auth without ingredients failed")
+    public void createOrderWithoutAuthWithoutIngredientsFailed() {
+        ValidatableResponse newOrderResponse = orderClient.createOrderWithoutIngredients();
+        orderAssertions.withoutIngredientFailed(newOrderResponse);
     }
 
     @Test
     @DisplayName("Create order without auth successful with unknown ingredient")
-    public void createOrderWithoutAuthWithUnknownIngredient() {
+    public void createOrderWithoutAuthWithUnknownIngredientFailed() {
         ValidatableResponse newOrderResponse = orderClient.createOrderWithBadIngredient();
-        orderAssertions.orderWithBadIngredient(newOrderResponse);
+        orderAssertions.badIngredientFailed(newOrderResponse);
     }
 
     @Test
     @DisplayName("Create order with auth successful with ingredients")
-    public void createOrderWithAuthWithIngredients() {
-        token = authClient.logIn(credentials).extract().path("accessToken");
-
+    public void createOrderWithAuthWithIngredientsSuccessful() {
         ValidatableResponse newOrderResponse = orderClient.createOrderWithIngredients(token);
-        orderAssertions.orderWithAuthSuccessful(newOrderResponse, credentials);
+        orderAssertions.orderSuccessful(newOrderResponse, credentials);
     }
 
     @Test
@@ -56,13 +69,11 @@ public class OrderTest {
     }
 
     @Test
-    @DisplayName("Get orders list without auth failed")
+    @DisplayName("Get orders list with auth successful")
     public void getOrdersWithAuthSuccessful() {
-        token = authClient.logIn(credentials).extract().path("accessToken");
         orderClient.createOrderWithIngredients(token);
 
         ValidatableResponse response = orderClient.getOrders(token);
         orderAssertions.getOrderSuccessful(response);
     }
-
 }

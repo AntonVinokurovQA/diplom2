@@ -18,7 +18,7 @@ public class UserAssertions {
     }
 
     @Step
-    public void duplicatedError(ValidatableResponse response) {
+    public void duplicatedFailed(ValidatableResponse response) {
         response
                 .assertThat()
                 .statusCode(SC_FORBIDDEN)
@@ -27,18 +27,18 @@ public class UserAssertions {
     }
 
     @Step
-    public void notRequiredFieldError(ValidatableResponse response) {
+    public void notRequiredFieldFailed(ValidatableResponse response) {
         response
-                .assertThat().log().all()
+                .assertThat()
                 .statusCode(SC_FORBIDDEN)
                 .body("success", is(false))
                 .body("message", equalTo("Email, password and name are required fields"));
     }
 
     @Step
-    public void userGetSuccessful(ValidatableResponse response) {
+    public void getUserSuccessful(ValidatableResponse response) {
         response
-                .assertThat().log().all()
+                .assertThat()
                 .statusCode(SC_OK)
                 .body("success", is(true))
                 .body("user.email", not(empty()))
@@ -46,9 +46,9 @@ public class UserAssertions {
     }
 
     @Step
-    public void userUpdateSuccessful(ValidatableResponse response, User user) {
+    public void updateUserSuccessful(ValidatableResponse response, User user) {
         response
-                .assertThat().log().all()
+                .assertThat()
                 .statusCode(SC_OK)
                 .body("success", is(true))
                 .body("user.email", equalTo(user.getEmail().toLowerCase()))
@@ -56,9 +56,9 @@ public class UserAssertions {
     }
 
     @Step
-    public void userUpdateUnauthorisedError(ValidatableResponse response) {
+    public void unauthorisedError(ValidatableResponse response) {
         response
-                .assertThat().log().all()
+                .assertThat()
                 .statusCode(SC_UNAUTHORIZED)
                 .body("success", is(false))
                 .body("message", equalTo("You should be authorised"));

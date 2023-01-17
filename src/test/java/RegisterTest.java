@@ -30,7 +30,7 @@ public class RegisterTest {
         userClient.createUser(user);
 
         ValidatableResponse createUserResponse = userClient.createUser(user);
-        userAssertions.duplicatedError(createUserResponse);
+        userAssertions.duplicatedFailed(createUserResponse);
     }
 
     @Test
@@ -40,7 +40,7 @@ public class RegisterTest {
         userClient.createUser(user);
 
         ValidatableResponse createUserResponse = userClient.createUser(user);
-        userAssertions.notRequiredFieldError(createUserResponse);
+        userAssertions.notRequiredFieldFailed(createUserResponse);
     }
 
     @Test
@@ -50,7 +50,7 @@ public class RegisterTest {
         userClient.createUser(user);
 
         ValidatableResponse createUserResponse = userClient.createUser(user);
-        userAssertions.notRequiredFieldError(createUserResponse);
+        userAssertions.notRequiredFieldFailed(createUserResponse);
     }
 
     @Test
@@ -60,8 +60,6 @@ public class RegisterTest {
         userClient.createUser(user);
 
         ValidatableResponse createUserResponse = userClient.createUser(user);
-        userAssertions.notRequiredFieldError(createUserResponse);
+        userAssertions.notRequiredFieldFailed(createUserResponse);
     }
-
-
 }

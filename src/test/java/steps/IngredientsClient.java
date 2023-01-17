@@ -1,5 +1,6 @@
 package steps;
 
+import io.qameta.allure.Step;
 import io.restassured.http.ContentType;
 
 import java.util.List;
@@ -9,13 +10,14 @@ import static data.TestData.INGREDIENTS_URI;
 import static io.restassured.RestAssured.given;
 
 public class IngredientsClient {
-    public List<String> getListOfIngredients(){
-        return given().log().all()
+    @Step
+    public List<String> getListOfIngredientsId(){
+        return given()
                 .baseUri(BASE_URI)
                 .contentType(ContentType.JSON)
                 .and()
                 .when()
                 .get(INGREDIENTS_URI)
-                .then().log().all().extract().path("data._id");
+                .then().extract().path("data._id");
     }
 }

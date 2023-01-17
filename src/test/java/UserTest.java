@@ -3,6 +3,7 @@ import io.restassured.response.ValidatableResponse;
 import json.Credentials;
 import json.User;
 import json.UserGenerator;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import steps.AuthClient;
@@ -22,25 +23,28 @@ public class UserTest {
         user = UserGenerator.getRandomUser();
         credentials = new Credentials(user.getEmail(), user.getPassword());
         userClient.createUser(user);
+        token = authClient.logIn(credentials).extract().path("accessToken");
+    }
+
+    @After
+    public void tearDown() {
+        userClient.deleteUser(token);
     }
 
     @Test
     @DisplayName("Get user info with auth")
     public void getUserInfo() {
-        token = authClient.logIn(credentials).extract().path("accessToken");
-
         ValidatableResponse getUserResponse = userClient.getUser(token);
-        userAssertions.userGetSuccessful(getUserResponse);
+        userAssertions.getUserSuccessful(getUserResponse);
     }
 
     @Test
     @DisplayName("Update user data with auth")
     public void updateUserWithAuth() {
-        token = authClient.logIn(credentials).extract().path("accessToken");
         user = UserGenerator.getRandomUser();
 
         ValidatableResponse getUserResponse = userClient.updateUser(token, user);
-        userAssertions.userUpdateSuccessful(getUserResponse, user);
+        userAssertions.updateUserSuccessful(getUserResponse, user);
     }
 
     @Test
@@ -49,6 +53,6 @@ public class UserTest {
         user = UserGenerator.getRandomUser();
 
         ValidatableResponse getUserResponse = userClient.updateUser(user);
-        userAssertions.userUpdateUnauthorisedError(getUserResponse);
+        userAssertions.unauthorisedError(getUserResponse);
     }
 }

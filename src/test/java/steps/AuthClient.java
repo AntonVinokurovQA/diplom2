@@ -12,7 +12,7 @@ import static io.restassured.RestAssured.given;
 public class AuthClient {
     @Step
     public ValidatableResponse logIn(Credentials credentials) {
-        return given().log().all()
+        return given()
                 .baseUri(BASE_URI)
                 .contentType(ContentType.JSON)
                 .and()

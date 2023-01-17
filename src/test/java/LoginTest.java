@@ -1,30 +1,34 @@
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
-import json.Credentials;
-import json.User;
-import json.UserGenerator;
-import org.junit.Before;
-import org.junit.Test;
-import steps.AuthAssertions;
-import steps.AuthClient;
-import steps.UserClient;
+import json.*;
+import org.junit.*;
+import steps.*;
 
 public class LoginTest {
-    Credentials credentials;
-    AuthClient authClient = new AuthClient();
-    AuthAssertions authAssertions = new AuthAssertions();
+    private AuthClient authClient = new AuthClient();
+    private AuthAssertions authAssertions = new AuthAssertions();
+    private UserClient userClient = new UserClient();
+    private Credentials credentials;
     private String badLogin = "test";
+    private String token;
+
     @Before
     public void setUp() {
         User tempUser = UserGenerator.getRandomUser();
-        UserClient userClient = new UserClient();
+
         userClient.createUser(tempUser);
         credentials = new Credentials(tempUser.getEmail(), tempUser.getPassword());
+        token = authClient.logIn(credentials).extract().path("accessToken");
+    }
+
+    @After
+    public void tearDown() {
+        userClient.deleteUser(token);
     }
 
     @Test
     @DisplayName("Log in with valid credentials success")
-    public void logInSuccess() {
+    public void logInSuccessful() {
         ValidatableResponse logInResponse = authClient.logIn(credentials);
 
         authAssertions.logInSuccessful(logInResponse);
@@ -32,30 +36,28 @@ public class LoginTest {
 
     @Test
     @DisplayName("Log in without email fail")
-    public void logInWithoutEmailFail() {
+    public void logInWithoutEmailFailed() {
         credentials.setEmail("");
         ValidatableResponse logInResponse = authClient.logIn(credentials);
 
-        authAssertions.logInFailed(logInResponse);
+        authAssertions.unauthorizedFailed(logInResponse);
     }
 
     @Test
     @DisplayName("Log in without password fail")
-    public void logInWithoutPassFail() {
+    public void logInWithoutPassFailed() {
         credentials.setPassword("");
         ValidatableResponse logInResponse = authClient.logIn(credentials);
 
-        authAssertions.logInFailed(logInResponse);
+        authAssertions.unauthorizedFailed(logInResponse);
     }
 
     @Test
     @DisplayName("Log in without password fail")
-    public void logInWithIncorrectLogin() {
+    public void logInWithIncorrectLoginFailed() {
         credentials.setEmail(badLogin);
         ValidatableResponse logInResponse = authClient.logIn(credentials);
 
-        authAssertions.logInFailed(logInResponse);
+        authAssertions.unauthorizedFailed(logInResponse);
     }
-
-
 }
