@@ -1,63 +1,54 @@
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
+import json.Credentials;
 import json.User;
 import json.UserGenerator;
+import org.junit.Before;
 import org.junit.Test;
+import steps.AuthClient;
 import steps.UserAssertions;
 import steps.UserClient;
 
 public class UserTest {
     private UserClient userClient = new UserClient();
     private UserAssertions userAssertions = new UserAssertions();
-    @Test
-    @DisplayName("Create User with valid credentials successful")
-    public void createUserSuccessful(){
-        User user = UserGenerator.getRandomUser();
+    private AuthClient authClient = new AuthClient();
+    private String token;
+    private User user;
+    private Credentials credentials;
 
-        ValidatableResponse createUserResponse = userClient.createUser(user);
-        userAssertions.createdSuccessful(createUserResponse);
+    @Before
+    public void serUp() {
+        user = UserGenerator.getRandomUser();
+        credentials = new Credentials(user.getEmail(), user.getPassword());
+        userClient.createUser(user);
     }
 
     @Test
-    @DisplayName("Create duplicate User failed")
-    public void createDuplicatedUserIsFailed(){
-        User user = UserGenerator.getRandomUser();
-        userClient.createUser(user);
+    @DisplayName("Get user info with auth")
+    public void getUserInfo() {
+        token = authClient.logIn(credentials).extract().path("accessToken");
 
-        ValidatableResponse createUserResponse = userClient.createUser(user);
-        userAssertions.duplicatedError(createUserResponse);
+        ValidatableResponse getUserResponse = userClient.getUser(token);
+        userAssertions.userGetSuccessful(getUserResponse);
     }
 
     @Test
-    @DisplayName("Create User without email failed")
-    public void createUserWithoutEmailIsFailed(){
-        User user = UserGenerator.getRandomUser();
-        user.setEmail("");
-        userClient.createUser(user);
+    @DisplayName("Update user data with auth")
+    public void updateUserWithAuth() {
+        token = authClient.logIn(credentials).extract().path("accessToken");
+        user = UserGenerator.getRandomUser();
 
-        ValidatableResponse createUserResponse = userClient.createUser(user);
-        userAssertions.notRequiredFieldError(createUserResponse);
+        ValidatableResponse getUserResponse = userClient.updateUser(token, user);
+        userAssertions.userUpdateSuccessful(getUserResponse, user);
     }
 
     @Test
-    @DisplayName("Create User without name failed")
-    public void createUserWithoutNameIsFailed(){
-        User user = UserGenerator.getRandomUser();
-        user.setName("");
-        userClient.createUser(user);
+    @DisplayName("Update user data without auth")
+    public void updateUserWithoutAuth() {
+        user = UserGenerator.getRandomUser();
 
-        ValidatableResponse createUserResponse = userClient.createUser(user);
-        userAssertions.notRequiredFieldError(createUserResponse);
-    }
-
-    @Test
-    @DisplayName("Create User without password failed")
-    public void createUserWithoutPassIsFailed(){
-        User user = UserGenerator.getRandomUser();
-        user.setPassword("");
-        userClient.createUser(user);
-
-        ValidatableResponse createUserResponse = userClient.createUser(user);
-        userAssertions.notRequiredFieldError(createUserResponse);
+        ValidatableResponse getUserResponse = userClient.updateUser(user);
+        userAssertions.userUpdateUnauthorisedError(getUserResponse);
     }
 }

@@ -9,7 +9,7 @@ import steps.AuthAssertions;
 import steps.AuthClient;
 import steps.UserClient;
 
-public class AuthorizationTest {
+public class LoginTest {
     Credentials credentials;
     AuthClient authClient = new AuthClient();
     AuthAssertions authAssertions = new AuthAssertions();
