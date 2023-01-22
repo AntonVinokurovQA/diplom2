@@ -3,10 +3,12 @@ package steps;
 import io.qameta.allure.Step;
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
+import json.Credentials;
 import json.User;
 
 import static data.TestData.*;
 import static io.restassured.RestAssured.given;
+import static org.apache.http.HttpStatus.SC_OK;
 
 public class UserClient {
     @Step
@@ -31,6 +33,18 @@ public class UserClient {
                 .when()
                 .delete(USER_URI)
                 .then();
+    }
+
+    @Step
+    public void deleteUser(User user) {
+        Credentials credentials = new Credentials(user.getEmail(), user.getPassword());
+        AuthClient authClient = new AuthClient();
+        UserClient userClient = new UserClient();
+
+        if (authClient.logIn(credentials).extract().statusCode() == SC_OK) {
+            String token = authClient.logIn(credentials).extract().path("accessToken");
+            userClient.deleteUser(token);
+        }
     }
 
     @Step

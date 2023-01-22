@@ -2,6 +2,7 @@ import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import json.User;
 import json.UserGenerator;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import steps.UserAssertions;
@@ -13,8 +14,13 @@ public class RegisterTest {
     private User user;
 
     @Before
-    public void serUp() {
+    public void setUp() {
         user = UserGenerator.getRandomUser();
+    }
+
+    @After
+    public void tearDown() {
+        userClient.deleteUser(user);
     }
 
     @Test
